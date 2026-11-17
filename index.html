@@ -34,12 +34,16 @@
   const tg = window.Telegram && window.Telegram.WebApp;
   if (tg) { tg.ready(); tg.expand(); }
 
-  // Midnight at the start of Nov 19, 2026 in the viewer's own timezone.
+  // Iran: count down to 05:00 UTC (US store unlock, since Iranians buy via US/EU stores).
+  // Everyone else: count down to local midnight on Nov 19, 2026.
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const target = new Date(2026, 10, 19, 0, 0, 0); // month is 0-based; local time
+  const isIran = (tz === 'Asia/Tehran' || tz === 'Iran');
+  const target = isIran
+    ? new Date(Date.UTC(2026, 10, 19, 5, 0, 0)) // month is 0-based
+    : new Date(2026, 10, 19, 0, 0, 0);
 
   document.getElementById('sub').textContent =
-    'Unlocks at 12:00 AM, Nov 19, 2026 (' + tz + ')';
+    'Unlocks ' + target.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) + ' (' + tz + ')';
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
