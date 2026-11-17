@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>GTA VI Countdown</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  body {
+    margin: 0; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, #1b0b3a, #ff4f81 120%);
+    color: #fff; font-family: system-ui, sans-serif; text-align: center;
+  }
+  h1 { font-size: 1.4rem; letter-spacing: 2px; margin: 0 0 1rem; }
+  #timer { display: flex; gap: 12px; }
+  .box { background: rgba(0,0,0,.35); border-radius: 14px; padding: 14px 10px; min-width: 64px; }
+  .num { font-size: 2.2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .lbl { font-size: .7rem; opacity: .75; text-transform: uppercase; }
+  #sub { margin-top: 1.2rem; font-size: .8rem; opacity: .8; }
+</style>
+</head>
+<body>
+  <h1>GTA VI RELEASE IN</h1>
+  <div id="timer">
+    <div class="box"><div class="num" id="d">--</div><div class="lbl">days</div></div>
+    <div class="box"><div class="num" id="h">--</div><div class="lbl">hours</div></div>
+    <div class="box"><div class="num" id="m">--</div><div class="lbl">min</div></div>
+    <div class="box"><div class="num" id="s">--</div><div class="lbl">sec</div></div>
+  </div>
+  <div id="sub"></div>
+
+<script>
+  const tg = window.Telegram && window.Telegram.WebApp;
+  if (tg) { tg.ready(); tg.expand(); }
+
+  // Midnight at the start of Nov 19, 2026 in the viewer's own timezone.
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const target = new Date(2026, 10, 19, 0, 0, 0); // month is 0-based; local time
+
+  document.getElementById('sub').textContent =
+    'Unlocks at 12:00 AM, Nov 19, 2026 (' + tz + ')';
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const diff = target - new Date();
+    if (diff <= 0) {
+      document.querySelector('h1').textContent = 'GTA VI IS OUT!';
+      document.getElementById('timer').style.display = 'none';
+      return;
+    }
+    const s = Math.floor(diff / 1000);
+    document.getElementById('d').textContent = pad(Math.floor(s / 86400));
+    document.getElementById('h').textContent = pad(Math.floor(s % 86400 / 3600));
+    document.getElementById('m').textContent = pad(Math.floor(s % 3600 / 60));
+    document.getElementById('s').textContent = pad(s % 60);
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
