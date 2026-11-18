@@ -18,9 +18,12 @@
   .num { font-size: 2.2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
   .lbl { font-size: .7rem; opacity: .75; text-transform: uppercase; }
   #sub { margin-top: 1.2rem; font-size: .8rem; opacity: .8; }
+  #region { background: rgba(0,0,0,.35); border-radius: 12px; padding: 10px 16px; margin-bottom: 1.4rem; font-size: .85rem; }
+  #region b { font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
+  <div id="region"></div>
   <h1>GTA VI RELEASE IN</h1>
   <div id="timer">
     <div class="box"><div class="num" id="d">--</div><div class="lbl">days</div></div>
@@ -47,7 +50,34 @@
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
+  // Same list for every viewer. Unlock = midnight local time on Nov 19, 2026, written in UTC.
+  const regions = [
+    { name: 'New Zealand',     utc: Date.UTC(2026, 10, 18, 11, 0) },
+    { name: 'Australia (East)', utc: Date.UTC(2026, 10, 18, 13, 0) },
+    { name: 'Japan / Korea',   utc: Date.UTC(2026, 10, 18, 15, 0) },
+    { name: 'China / Singapore', utc: Date.UTC(2026, 10, 18, 16, 0) },
+    { name: 'India',           utc: Date.UTC(2026, 10, 18, 18, 30) },
+    { name: 'UAE',             utc: Date.UTC(2026, 10, 18, 20, 0) },
+    { name: 'Central Europe',  utc: Date.UTC(2026, 10, 18, 23, 0) },
+    { name: 'UK',              utc: Date.UTC(2026, 10, 19, 0, 0) },
+    { name: 'Brazil',          utc: Date.UTC(2026, 10, 19, 3, 0) },
+    { name: 'US East',         utc: Date.UTC(2026, 10, 19, 5, 0) },
+    { name: 'US Central',      utc: Date.UTC(2026, 10, 19, 6, 0) },
+    { name: 'US West',         utc: Date.UTC(2026, 10, 19, 8, 0) }
+  ];
+
+  function updateRegion() {
+    const el = document.getElementById('region');
+    const now = Date.now();
+    const next = regions.find(r => r.utc > now);
+    if (!next) { el.style.display = 'none'; return; }
+    const s = Math.floor((next.utc - now) / 1000);
+    el.innerHTML = 'Next unlock: <b>' + next.name + '</b> in <b>' +
+      pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s % 3600 / 60)) + ':' + pad(s % 60) + '</b>';
+  }
+
   function tick() {
+    updateRegion();
     const diff = target - new Date();
     if (diff <= 0) {
       document.querySelector('h1').textContent = 'GTA VI IS OUT!';
